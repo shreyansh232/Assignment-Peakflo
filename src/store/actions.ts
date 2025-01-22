@@ -1,30 +1,27 @@
-import type { Task } from "./types"
+import { ActionTypes } from "./types";
+import { Task, Status } from "../types/board";
 
-export const ADD_TASK = "ADD_TASK"
-export const MOVE_TASK = "MOVE_TASK"
-
-interface AddTaskAction {
-  type: typeof ADD_TASK
-  payload: Task
-}
-
-interface MoveTaskAction {
-  type: typeof MOVE_TASK
+export const addTask = (status: Status, title: string) => ({
+  type: ActionTypes.ADD_TASK,
   payload: {
-    taskId: string
-    newStatus: Task["status"]
-  }
-}
+    id: Math.random().toString(36).substring(7),
+    title,
+    description: "",
+    status: status as Status,
+  },
+});
 
-export type BoardActionTypes = AddTaskAction | MoveTaskAction
-
-export const addTask = (task: Task): BoardActionTypes => ({
-  type: ADD_TASK,
+export const updateTask = (task: Task) => ({
+  type: ActionTypes.UPDATE_TASK,
   payload: task,
-})
+});
 
-export const moveTask = (taskId: string, newStatus: Task["status"]): BoardActionTypes => ({
-  type: MOVE_TASK,
+export const deleteTask = (taskId: string) => ({
+  type: ActionTypes.DELETE_TASK,
+  payload: taskId,
+});
+
+export const moveTask = (taskId: string, newStatus: Status) => ({
+  type: ActionTypes.MOVE_TASK,
   payload: { taskId, newStatus },
-})
-
+});

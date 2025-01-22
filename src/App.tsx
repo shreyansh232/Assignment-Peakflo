@@ -1,9 +1,9 @@
 import { Provider } from "react-redux";
-import { ThemeProvider, createTheme, CssBaseline } from "@mui/material"
-import store from "./store/index";
-import  Board  from "./Board";
+import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
+import { store } from "./store/store";
+import Board from "./components/Board";
 
-const theme = createTheme()
+const theme = createTheme();
 
 function App() {
   return (

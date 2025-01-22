@@ -1,14 +1,11 @@
-import React from 'react';
-
-
-import { Card, CardContent } from "../src/components/ui/card"
-import type { Task } from "../types/board"
-import { useDraggable } from "@dnd-kit/core"
-import { CSS } from "@dnd-kit/utilities"
+import { Card, CardContent } from "./ui/card";
+import type { Task } from "../types/board";
+import { useDraggable } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
 
 interface TaskCardProps {
-  task: Task
-  onClick: () => void
+  task: Task;
+  onClick: () => void;
 }
 
 export function TaskCard({ task, onClick }: TaskCardProps) {
@@ -18,13 +15,13 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
       type: "Task",
       task,
     },
-  })
+  });
 
   const style = transform
     ? {
         transform: CSS.Translate.toString(transform),
       }
-    : undefined
+    : undefined;
 
   return (
     <Card
@@ -39,6 +36,5 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
         <p className="text-sm">{task.title}</p>
       </CardContent>
     </Card>
-  )
+  );
 }
-

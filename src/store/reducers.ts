@@ -1,26 +1,66 @@
-import type { BoardState } from "./types"
-import { ADD_TASK, MOVE_TASK, type BoardActionTypes } from "./actions"
+import { BoardState, ActionTypes } from './types'
+import { Column, Status } from '../types/board'
+
+const defaultColumns: Column[] = [
+  {
+    id: "not-started" as Status,
+    title: "Not started",
+    color: "bg-red-100",
+    tasks: [],
+  },
+  {
+    id: "in-progress" as Status,
+    title: "In progress",
+    color: "bg-yellow-100",
+    tasks: [],
+  },
+  {
+    id: "completed" as Status,
+    title: "Completed",
+    color: "bg-green-100",
+    tasks: [],
+  },
+]
 
 const initialState: BoardState = {
+  columns: defaultColumns,
   tasks: [],
+  color: "",
 }
 
-export const boardReducer = (state = initialState, action: BoardActionTypes): BoardState => {
+export const boardReducer = (state = initialState, action: any) => {
   switch (action.type) {
-    case ADD_TASK:
+    case ActionTypes.ADD_TASK:
       return {
         ...state,
-        tasks: [...state.tasks, action.payload],
+        tasks: [...state.tasks, action.payload]
       }
-    case MOVE_TASK:
+    
+    case ActionTypes.UPDATE_TASK:
       return {
         ...state,
-        tasks: state.tasks.map((task) =>
-          task.id === action.payload.taskId ? { ...task, status: action.payload.newStatus } : task,
-        ),
+        tasks: state.tasks.map(task => 
+          task.id === action.payload.id ? action.payload : task
+        )
       }
+    
+    case ActionTypes.DELETE_TASK:
+      return {
+        ...state,
+        tasks: state.tasks.filter(task => task.id !== action.payload)
+      }
+    
+    case ActionTypes.MOVE_TASK:
+      return {
+        ...state,
+        tasks: state.tasks.map(task =>
+          task.id === action.payload.taskId 
+            ? { ...task, status: action.payload.newStatus }
+            : task
+        )
+      }
+    
     default:
       return state
   }
 }
-
