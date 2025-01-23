@@ -1,34 +1,6 @@
-import { BoardState, ActionTypes } from "./types";
-import { Column, Status } from "../types/board";
+import { ActionTypes } from "./types";
+import { initialState } from "./boardSlice";
 
-const defaultColumns: Column[] = [
-  {
-    id: "not-started" as Status,
-    title: "Not started",
-    color: "bg-red-100",
-    tasks: [],
-  },
-  {
-    id: "in-progress" as Status,
-    title: "In progress",
-    color: "bg-yellow-100",
-    tasks: [],
-  },
-  {
-    id: "completed" as Status,
-    title: "Completed",
-    color: "bg-green-100",
-    tasks: [],
-  },
-];
-
-const initialState: BoardState = {
-  columns: defaultColumns,
-  tasks: [],
-  color: "",
-  selectedTask: null,
-  isDialogOpen: false,
-};
 
 export const boardReducer = (state = initialState, action: any) => {
   switch (action.type) {

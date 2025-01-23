@@ -10,10 +10,11 @@ import { MoreHorizontal, Plus } from "lucide-react";
 import { useDroppable } from "@dnd-kit/core";
 import type { Column as ColumnType, Task } from "../types/board";
 import { TaskCard } from "./task-card";
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { deleteColumn, updateColumn } from '../store/actions';
-import { Input } from './ui/input';
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { deleteColumn, updateColumn, updateTask } from "../store/actions";
+import { Input } from "./ui/input";
+import { TaskDialog } from "./task-dialog";
 
 interface ColumnProps {
   column: ColumnType;
@@ -22,28 +23,30 @@ interface ColumnProps {
   onTaskClick: (taskId: string) => void;
 }
 
-export function Column({ column, tasks, onAddTask, onTaskClick }: ColumnProps) {
+export const Column = ({ column, tasks, onAddTask }: ColumnProps) => {
   const { setNodeRef } = useDroppable({
     id: column.id,
   });
   const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(column.title);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   const handleEdit = () => {
     setIsEditing(true);
   };
 
   const handleSave = () => {
-    dispatch(updateColumn({
-      ...column,
-      title: editedTitle
-    }));
+    dispatch(
+      updateColumn({
+        ...column,
+        title: editedTitle,
+      })
+    );
     setIsEditing(false);
-    
-    // Update localStorage
     const existingColumns = JSON.parse(localStorage.getItem("columns") || "[]");
-    const updatedColumns = existingColumns.map((c: ColumnType) => 
+    const updatedColumns = existingColumns.map((c: ColumnType) =>
       c.id === column.id ? { ...c, title: editedTitle } : c
     );
     localStorage.setItem("columns", JSON.stringify(updatedColumns));
@@ -51,27 +54,50 @@ export function Column({ column, tasks, onAddTask, onTaskClick }: ColumnProps) {
 
   const handleDelete = () => {
     dispatch(deleteColumn(column.id));
-    
-    // Update localStorage
     const existingColumns = JSON.parse(localStorage.getItem("columns") || "[]");
-    const updatedColumns = existingColumns.filter((c: ColumnType) => c.id !== column.id);
+    const updatedColumns = existingColumns.filter(
+      (c: ColumnType) => c.id !== column.id
+    );
     localStorage.setItem("columns", JSON.stringify(updatedColumns));
   };
 
+  const handleUpdateTask = (updatedTask: Task) => {
+    dispatch(updateTask(updatedTask));
+    const existingTasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    const updatedTasks = existingTasks.map((t: Task) =>
+      t.id === updatedTask.id ? updatedTask : t
+    );
+    localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+  };
+
+  const handleTaskClick = (taskId: string) => {
+    const task = tasks.find((t) => t.id === taskId);
+    setSelectedTask(task || null);
+    setIsDialogOpen(true);
+  };
+
+  const handleSaveTask = (updatedTask: Task) => {
+    handleUpdateTask(updatedTask);
+  };
+
   return (
-<Card className="w-80 shadow-lg border border-gray-100">
-      <CardHeader className={`flex flex-row items-center space-x-2 rounded-t-lg px-4 py-2`}>
+    <Card className="w-80 shadow-lg border border-gray-100">
+      <CardHeader
+        className={`flex flex-row items-center space-x-2 rounded-t-lg px-4 py-2`}
+      >
         <div className="flex flex-1 items-center space-x-2">
           {isEditing ? (
             <Input
               value={editedTitle}
               onChange={(e) => setEditedTitle(e.target.value)}
               onBlur={handleSave}
-              onKeyPress={(e) => e.key === 'Enter' && handleSave()}
+              onKeyPress={(e) => e.key === "Enter" && handleSave()}
               autoFocus
             />
           ) : (
-            <h3 className={`font-semibold ${column.color} px-1 rounded-sm text-sm`}>
+            <h3
+              className={`font-semibold ${column.color} px-1 rounded-sm text-sm`}
+            >
               {column.title}
             </h3>
           )}
@@ -89,10 +115,7 @@ export function Column({ column, tasks, onAddTask, onTaskClick }: ColumnProps) {
             <DropdownMenuItem onClick={handleDelete}>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button
-          variant="link"
-          onClick={onAddTask}
-        >
+        <Button variant="link" onClick={onAddTask}>
           <Plus size={16} />
         </Button>
       </CardHeader>
@@ -101,7 +124,8 @@ export function Column({ column, tasks, onAddTask, onTaskClick }: ColumnProps) {
           <TaskCard
             key={task.id}
             task={task}
-            onClick={() => onTaskClick(task.id)}
+            onClick={() => handleTaskClick(task.id)}
+            onUpdateTask={handleUpdateTask}
           />
         ))}
         <Button
@@ -113,6 +137,15 @@ export function Column({ column, tasks, onAddTask, onTaskClick }: ColumnProps) {
           New Task
         </Button>
       </CardContent>
+      <TaskDialog
+        task={selectedTask}
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        onSave={handleSaveTask}
+        onDelete={() => {
+          handleDelete();
+        }}
+      />
     </Card>
   );
 }

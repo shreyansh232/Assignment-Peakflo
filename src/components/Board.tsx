@@ -43,23 +43,12 @@ export default function Board() {
     },
   });
 
-  // Load columns and tasks from local storage on component mount
-  useEffect(() => {
-    const existingColumns = JSON.parse(localStorage.getItem("columns") || "[]");
-    const existingTasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-
-    existingColumns.forEach((column: Column) => dispatch(addColumn(column)));
-    existingTasks.forEach((task: Task) => dispatch(addTask(task.status, task.title))); // Adjust as necessary
-  }, [dispatch]);
-
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) return;
     const taskId = active.id as string;
     const newStatus = over.id as Task["status"];
     dispatch(moveTask(taskId, newStatus));
-
-    // Update local storage
     const existingTasks = JSON.parse(localStorage.getItem("tasks") || "[]");
     const updatedTasks = existingTasks.map((task: Task) =>
       task.id === taskId ? { ...task, status: newStatus } : task
@@ -74,14 +63,34 @@ export default function Board() {
       tasks: [],
     };
     dispatch(addColumn(newColumn));
-    // Save to local storage
     const existingColumns = JSON.parse(localStorage.getItem("columns") || "[]");
     localStorage.setItem(
       "columns",
       JSON.stringify([...existingColumns, newColumn])
     );
   };
+  const handleAddTask = (columnId: Status) => {
+    const newTask = {
+      id: Date.now().toString(),
+      title: "New Task",
+      description: "",
+      status: columnId
+    };
+    
+    dispatch(addTask(columnId, "New Task"));
+    const currentTasks = tasks;
+    localStorage.setItem("tasks", JSON.stringify([...currentTasks, newTask]));
+  };
 
+  useEffect(() => {
+    const existingColumns = JSON.parse(localStorage.getItem("columns") || "[]");
+    const existingTasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    existingColumns.forEach((column: Column) => dispatch(addColumn(column)));
+    existingTasks.forEach((task: Task) => dispatch(updateTask(task)));
+}, [dispatch]);
+
+
+  
   return (
     <div className="flex min-h-screen flex-col p-8">
       <div className="w-10 mb-2" onClick={handleAddColumn}>
@@ -97,7 +106,7 @@ export default function Board() {
               key={column.id}
               column={column}
               tasks={tasks.filter((task) => task.status === column.id)}
-              onAddTask={() => dispatch(addTask(column.id, "New Task"))}
+              onAddTask={() => handleAddTask(column.id)}
               onTaskClick={(taskId) => {
                 const task = tasks.find((t) => t.id === taskId);
                 if (task) {

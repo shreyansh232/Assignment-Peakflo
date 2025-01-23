@@ -92,6 +92,14 @@ export function TaskDialog({
             variant="destructive"
             onClick={() => {
               onDelete(task.id);
+              const existingTasks = JSON.parse(
+                localStorage.getItem("tasks") || "[]"
+              );
+              const updatedTasks = existingTasks.filter(
+                (t: Task) => t.id !== task.id
+              );
+              localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+
               onOpenChange(false);
             }}
           >
@@ -100,6 +108,20 @@ export function TaskDialog({
           <Button
             onClick={() => {
               onSave(editedTask);
+              const existingTasks = JSON.parse(
+                localStorage.getItem("tasks") || "[]"
+              );
+              const taskExists = existingTasks.some(
+                (t: Task) => t.id === editedTask.id
+              );
+              const updatedTasks = taskExists
+                ? existingTasks.map((t: Task) =>
+                    t.id === editedTask.id ? editedTask : t
+                  )
+                : [...existingTasks, editedTask];
+
+              localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+
               onOpenChange(false);
             }}
           >

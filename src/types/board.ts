@@ -14,7 +14,9 @@ export interface Column {
   tasks: Task[]
 }
 export interface BoardState {
-    tasks: Task[]
-    columns: Column[]
+    tasks: Task[];
+    columns: Column[];
+    color: string; 
+    selectedTask: Task | null
+    isDialogOpen: boolean
   }
-
