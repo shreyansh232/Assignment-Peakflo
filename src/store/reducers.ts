@@ -1,7 +1,6 @@
 import { ActionTypes } from "./types";
 import { initialState } from "./boardSlice";
 
-
 export const boardReducer = (state = initialState, action: any) => {
   switch (action.type) {
     case ActionTypes.ADD_TASK:
@@ -55,6 +54,22 @@ export const boardReducer = (state = initialState, action: any) => {
         ...state,
         columns: state.columns.filter((column) => column.id !== action.payload),
         tasks: state.tasks.filter((task) => task.status !== action.payload),
+      };
+    case "UPDATE_COLUMN_TITLE":
+      return {
+        ...state,
+        columns: state.columns.map((column) =>
+          column.id === action.payload.columnId
+            ? { ...column, title: action.payload.newTitle }
+            : column
+        ),
+      };
+
+    
+    case ActionTypes.CLEAR_COLUMNS:
+      return {
+        ...state,
+        columns: [],
       };
 
     default:

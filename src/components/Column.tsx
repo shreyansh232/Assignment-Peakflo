@@ -12,9 +12,9 @@ import type { Column as ColumnType, Task } from "../types/board";
 import { TaskCard } from "./task-card";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { deleteColumn, updateColumn, updateTask } from "../store/actions";
+import { deleteColumn, updateColumnTitle, updateTask } from "../store/actions";
 import { Input } from "./ui/input";
-import { TaskDialog } from "./task-dialog";
+import { useNavigate } from "react-router-dom";
 
 interface ColumnProps {
   column: ColumnType;
@@ -28,29 +28,27 @@ export const Column = ({ column, tasks, onAddTask }: ColumnProps) => {
     id: column.id,
   });
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(column.title);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  // const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   const handleEdit = () => {
     setIsEditing(true);
   };
 
   const handleSave = () => {
-    dispatch(
-      updateColumn({
-        ...column,
-        title: editedTitle,
-      })
-    );
+    dispatch(updateColumnTitle(column.id, editedTitle));
     setIsEditing(false);
+    
+    // Update localStorage
     const existingColumns = JSON.parse(localStorage.getItem("columns") || "[]");
     const updatedColumns = existingColumns.map((c: ColumnType) =>
       c.id === column.id ? { ...c, title: editedTitle } : c
     );
     localStorage.setItem("columns", JSON.stringify(updatedColumns));
   };
+  
 
   const handleDelete = () => {
     dispatch(deleteColumn(column.id));
@@ -71,14 +69,12 @@ export const Column = ({ column, tasks, onAddTask }: ColumnProps) => {
   };
 
   const handleTaskClick = (taskId: string) => {
-    const task = tasks.find((t) => t.id === taskId);
-    setSelectedTask(task || null);
-    setIsDialogOpen(true);
+    navigate(`/task/${taskId}`);
   };
 
-  const handleSaveTask = (updatedTask: Task) => {
-    handleUpdateTask(updatedTask);
-  };
+  // const handleSaveTask = (updatedTask: Task) => {
+  //   handleUpdateTask(updatedTask);
+  // };
 
   return (
     <Card className="w-80 shadow-lg border border-gray-100">
@@ -91,7 +87,12 @@ export const Column = ({ column, tasks, onAddTask }: ColumnProps) => {
               value={editedTitle}
               onChange={(e) => setEditedTitle(e.target.value)}
               onBlur={handleSave}
-              onKeyPress={(e) => e.key === "Enter" && handleSave()}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleSave();
+                }
+              }}
               autoFocus
             />
           ) : (
@@ -137,15 +138,6 @@ export const Column = ({ column, tasks, onAddTask }: ColumnProps) => {
           New Task
         </Button>
       </CardContent>
-      <TaskDialog
-        task={selectedTask}
-        open={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        onSave={handleSaveTask}
-        onDelete={() => {
-          handleDelete();
-        }}
-      />
     </Card>
   );
-}
+};

@@ -5,36 +5,29 @@ import {
   type DragEndEvent,
 } from "@dnd-kit/core";
 import { Column as ColumnComponent } from "./Column";
-import { TaskDialog } from "./task-dialog";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addTask,
   updateTask,
-  deleteTask,
   moveTask,
-  setSelectedTask,
-  setDialogOpen,
   addColumn,
+  clearColumns
 } from "../store/actions";
 import type { Task, Status } from "../types/board";
 import type { BoardState, Column } from "../store/types";
 import { Button } from "./ui/button";
 import { Plus } from "lucide-react";
 import { useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 
 export default function Board() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const columns = useSelector(
     (state: { board: BoardState }) => state.board.columns
   );
   const tasks = useSelector(
     (state: { board: BoardState }) => state.board.tasks
-  );
-  const selectedTask = useSelector(
-    (state: { board: BoardState }) => state.board.selectedTask
-  );
-  const isDialogOpen = useSelector(
-    (state: { board: BoardState }) => state.board.isDialogOpen
   );
 
   const sensors = useSensor(PointerSensor, {
@@ -56,19 +49,23 @@ export default function Board() {
     localStorage.setItem("tasks", JSON.stringify(updatedTasks));
   };
   const handleAddColumn = () => {
-    const newColumn: Column = {
-      id: `column-${Date.now()}` as Status,
-      title: "New Column",
-      color: "bg-blue-100",
-      tasks: [],
-    };
-    dispatch(addColumn(newColumn));
-    const existingColumns = JSON.parse(localStorage.getItem("columns") || "[]");
-    localStorage.setItem(
-      "columns",
-      JSON.stringify([...existingColumns, newColumn])
-    );
+    setTimeout(() => {
+      const newColumn: Column = {
+        id: `column-${Date.now()}-${Math.random().toString(36).substr(2, 9)}` as Status,
+        title: "New Column",
+        color: "bg-blue-100",
+        tasks: [],
+      };
+      
+      dispatch(addColumn(newColumn));
+      const existingColumns = JSON.parse(localStorage.getItem("columns") || "[]");
+      localStorage.setItem(
+        "columns",
+        JSON.stringify([...existingColumns, newColumn])
+      );
+    }, 500); 
   };
+  
   const handleAddTask = (columnId: Status) => {
     const newTask = {
       id: Date.now().toString(),
@@ -85,16 +82,24 @@ export default function Board() {
   useEffect(() => {
     const existingColumns = JSON.parse(localStorage.getItem("columns") || "[]");
     const existingTasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-    existingColumns.forEach((column: Column) => dispatch(addColumn(column)));
+    
+    // Filter out columns that already exist in Redux store
+    const uniqueColumns = existingColumns.filter(
+      (column: Column) => !columns.some(existingColumn => existingColumn.id === column.id)
+    );
+    
+    // Only add new unique columns
+    uniqueColumns.forEach((column: Column) => dispatch(addColumn(column)));
     existingTasks.forEach((task: Task) => dispatch(updateTask(task)));
-}, [dispatch]);
+  }, [dispatch, columns]);
+  
 
 
   
   return (
     <div className="flex min-h-screen flex-col p-8">
       <div className="w-10 mb-2" onClick={handleAddColumn}>
-        <Button variant="destructive">
+        <Button variant="default" className="bg-blue-700 hover:bg-blue-900">
           <Plus size={16} />
           Add New Status Board
         </Button>
@@ -108,23 +113,12 @@ export default function Board() {
               tasks={tasks.filter((task) => task.status === column.id)}
               onAddTask={() => handleAddTask(column.id)}
               onTaskClick={(taskId) => {
-                const task = tasks.find((t) => t.id === taskId);
-                if (task) {
-                  dispatch(setSelectedTask(task));
-                  dispatch(setDialogOpen(true));
-                }
+                navigate(`/task/${taskId}`);
               }}
             />
           ))}
         </div>
       </DndContext>
-      <TaskDialog
-        task={selectedTask}
-        open={isDialogOpen}
-        onOpenChange={(open) => dispatch(setDialogOpen(open))}
-        onSave={(task) => dispatch(updateTask(task))}
-        onDelete={(taskId) => dispatch(deleteTask(taskId))}
-      />
     </div>
   );
 }

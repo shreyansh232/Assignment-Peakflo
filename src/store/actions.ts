@@ -28,24 +28,36 @@ export const moveTask = (taskId: string, newStatus: Status) => ({
 
 export const addColumn = (column: Column) => ({
   type: ActionTypes.ADD_COLUMN,
-  payload: column
+  payload: column,
 });
 export const setSelectedTask = (task: Task | null) => ({
   type: ActionTypes.SET_SELECTED_TASK,
-  payload: task
+  payload: task,
 });
 
 export const setDialogOpen = (isOpen: boolean) => ({
   type: ActionTypes.SET_DIALOG_OPEN,
-  payload: isOpen
+  payload: isOpen,
 });
 
 export const deleteColumn = (columnId: Status) => ({
   type: ActionTypes.DELETE_COLUMN,
-  payload: columnId
+  payload: columnId,
 });
 
 export const updateColumn = (column: Column) => ({
   type: ActionTypes.UPDATE_COLUMN,
-  payload: column
+  payload: column,
+});
+
+export const updateColumnTitle = (columnId: string, newTitle: string) => ({
+  type: "UPDATE_COLUMN_TITLE",
+  payload: {
+    columnId,
+    newTitle,
+  },
+});
+
+export const clearColumns = () => ({
+  type: ActionTypes.CLEAR_COLUMNS,
 });

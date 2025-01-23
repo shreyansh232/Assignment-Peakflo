@@ -25,6 +25,14 @@ export enum ActionTypes {
   SET_SELECTED_TASK = 'SET_SELECTED_TASK',
   SET_DIALOG_OPEN = 'SET_DIALOG_OPEN',
   DELETE_COLUMN = 'DELETE_COLUMN',
-  UPDATE_COLUMN = 'UPDATE_COLUMN'
+  UPDATE_COLUMN = 'UPDATE_COLUMN',
+  CLEAR_COLUMNS = 'CLEAR_COLUMNS'
 
+}
+export interface UpdateColumnTitleAction {
+  type: 'UPDATE_COLUMN_TITLE';
+  payload: {
+    columnId: string;
+    newTitle: string;
+  };
 }
