@@ -12,7 +12,12 @@ import type { Column as ColumnType, Task } from "../types/board";
 import { TaskCard } from "./task-card";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { deleteColumn, updateColumnTitle, updateTask } from "../store/actions";
+import {
+  deleteColumn,
+  updateColumnTitle,
+  updateTask,
+  deleteTask,
+} from "../store/actions";
 import { Input } from "./ui/input";
 import { useNavigate } from "react-router-dom";
 
@@ -70,10 +75,16 @@ export const Column = ({ column, tasks, onAddTask }: ColumnProps) => {
     console.log(taskId);
     navigate(`/task/${taskId}`);
   };
-
-  // const handleSaveTask = (updatedTask: Task) => {
-  //   handleUpdateTask(updatedTask);
-  // };
+  const handleDeleteTask = (taskId: string) => {
+    if (taskId) {
+      dispatch(deleteTask(taskId));
+      const existingTasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+      const updatedTasks = existingTasks.filter(
+        (task: Task) => task.id !== taskId
+      );
+      localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+    }
+  };
 
   return (
     <Card className="w-80 shadow-lg border border-gray-300">
@@ -126,6 +137,7 @@ export const Column = ({ column, tasks, onAddTask }: ColumnProps) => {
             task={task}
             onClick={() => handleTaskClick(task.id)}
             onUpdateTask={handleUpdateTask}
+            onDelete={() => handleDeleteTask(task.id)}
           />
         ))}
         <Button

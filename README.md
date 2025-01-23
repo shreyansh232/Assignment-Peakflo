@@ -1,50 +1,92 @@
-# React + TypeScript + Vite
+# Peakflo Board - Task Management Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern task management board built with React, TypeScript, and Vite. Features drag-and-drop functionality, persistent storage, and a clean user interface.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Drag and drop tasks between columns
+- Create and manage custom status columns
+- Add and edit tasks with titles and descriptions
+- Persistent storage using `localStorage`
+- Responsive design
+- Real-time updates
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- React 18
+- TypeScript
+- Vite
+- Redux for state management
+- DND Kit for drag and drop
+- TailwindCSS for styling
+- UUID for unique identifiers
 
-- Configure the top-level `parserOptions` property like this:
+## UI
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+<img width="1678" alt="Screenshot 2025-01-24 at 1 19 29 AM" src="https://github.com/user-attachments/assets/e1a0f01f-1697-4454-8d69-28768a646925" />
+
+## Getting Started
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/shreyansh232/Assignment-Peakflo.git
+   ```
+
+2. Navigate to the project directory:
+
+   ```bash
+   cd Assignment-Peakflo
+   ```
+
+3. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+4. Start the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+5. Open your browser and visit `http://localhost:5173` to view the application.
+
+## How to Use
+
+- **Add a Column**: Click the "Add New Status Board" button to create a new column.
+- **Add a Task**: Click the "Add Task" button within a column to create a new task.
+- **Edit a Task**: Click on a task to open the task dialog, where you can edit the title and description.
+- **Drag and Drop**: Drag tasks between columns to update their status.
+- **Persistent Storage**: All tasks and columns are saved to `localStorage` and will persist across page reloads.
+
+## Folder Structure
+
+```
+/src
+|-- /components        # Reusable UI components
+|-- /store             # Redux store and actions
+|-- /types             # TypeScript type definitions
+|-- /utils             # Utility functions
+|-- App.tsx            # Main application component
+|-- main.tsx           # Entry point
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Contributing
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+Contributions are welcome! If you'd like to contribute, please follow these steps:
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+1. Fork the repository.
+2. Create a new branch for your feature or bugfix.
+3. Commit your changes.
+4. Push your branch and open a pull request.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+Let me know if you need further adjustments! 😊
+
+
+
