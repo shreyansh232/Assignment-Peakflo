@@ -56,7 +56,7 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
         <p className="text-sm">{task.title}</p>
       </CardContent>
       <CardContent className="p-3 pt-0">
-          <p className="text-xs text-gray-300 line-clamp-2">
+          <p className="text-xs text-gray-400 line-clamp-2">
             {task.description || "No description"}
           </p>
         </CardContent>

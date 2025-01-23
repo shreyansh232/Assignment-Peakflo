@@ -98,8 +98,18 @@ export default function Board() {
   }, [dispatch, columns]);
 
   return (
-    <div className="flex min-h-screen flex-col p-8">
-      <h1 className="text-4xl font-bold mb-5">Peakflo Board</h1>
+    <div className="flex min-h-screen flex-col ">
+      <div className="flex gap-2 border-b border-gray-100 shadow-md mb-5">
+        <div className="p-8 flex gap-1">
+        <img
+            src="./public/peakflo_logo.webp"
+            alt="logo"
+            className="h-10 w-10 rounded-md"
+          />
+          <h1 className="text-4xl font-bold">Peakflo Board</h1>
+      </div>
+      </div>
+      <div className="p-8">
       <div className="w-10 mb-4">
         <Button
           variant="default"
@@ -125,6 +135,7 @@ export default function Board() {
           ))}
         </div>
       </DndContext>
+      </div>
     </div>
   );
 }
