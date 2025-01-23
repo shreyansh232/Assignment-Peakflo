@@ -1,5 +1,5 @@
 import { DndContext, type DragEndEvent } from "@dnd-kit/core";
-import { Column } from "./column";
+import { Column } from "./Column";
 import { TaskDialog } from "./task-dialog";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
