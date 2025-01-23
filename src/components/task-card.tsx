@@ -9,13 +9,14 @@ interface TaskCardProps {
 }
 
 export function TaskCard({ task, onClick }: TaskCardProps) {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: task.id,
-    data: {
-      type: "Task",
-      task,
-    },
-  });
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id: task.id,
+      data: {
+        type: "Task",
+        task,
+      },
+    });
 
   const style = transform
     ? {
@@ -23,14 +24,20 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
       }
     : undefined;
 
+  const handleClick = () => {
+    if (!isDragging) {
+      onClick();
+    }
+  };
+
   return (
     <Card
       ref={setNodeRef}
+      onClick={handleClick}
       style={style}
       className="mb-2 cursor-grab active:cursor-grabbing"
       {...attributes}
       {...listeners}
-      onClick={onClick}
     >
       <CardContent className="p-3">
         <p className="text-sm">{task.title}</p>

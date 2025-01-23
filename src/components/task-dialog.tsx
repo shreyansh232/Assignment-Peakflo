@@ -2,6 +2,7 @@ import { Button } from "./ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -15,7 +16,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Textarea } from "./ui/textarea";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Task, Status } from "../types/board";
 
 interface TaskDialogProps {
@@ -34,6 +35,9 @@ export function TaskDialog({
   onDelete,
 }: TaskDialogProps) {
   const [editedTask, setEditedTask] = useState<Task | null>(task);
+  useEffect(() => {
+    setEditedTask(task);
+  }, [task]);
 
   if (!task || !editedTask) return null;
 
@@ -42,6 +46,9 @@ export function TaskDialog({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Edit Task</DialogTitle>
+          <DialogDescription>
+            Make changes to your task here. Click save when you're done.
+          </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">

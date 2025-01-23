@@ -8,10 +8,12 @@ import {
 } from "./ui/dropdown-menu";
 import { MoreHorizontal, Plus } from "lucide-react";
 import { useDroppable } from "@dnd-kit/core";
-import type { Column as ColumnType, Task, Status } from "../types/board";
+import type { Column as ColumnType, Task } from "../types/board";
 import { TaskCard } from "./task-card";
-import { addColumn } from "../store/actions";
-import { useDispatch } from "react-redux";
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { deleteColumn, updateColumn } from '../store/actions';
+import { Input } from './ui/input';
 
 interface ColumnProps {
   column: ColumnType;
@@ -21,26 +23,58 @@ interface ColumnProps {
 }
 
 export function Column({ column, tasks, onAddTask, onTaskClick }: ColumnProps) {
-  const dispatch = useDispatch();
   const { setNodeRef } = useDroppable({
     id: column.id,
   });
-  const handleAddColumn = () => {
-    dispatch(addColumn({
-      id: `column-${Date.now()}` as Status,
-      title: "New Column",
-      color: "bg-blue-100",
-      tasks: []
+  const dispatch = useDispatch();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(column.title);
+
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleSave = () => {
+    dispatch(updateColumn({
+      ...column,
+      title: editedTitle
     }));
+    setIsEditing(false);
+    
+    // Update localStorage
+    const existingColumns = JSON.parse(localStorage.getItem("columns") || "[]");
+    const updatedColumns = existingColumns.map((c: ColumnType) => 
+      c.id === column.id ? { ...c, title: editedTitle } : c
+    );
+    localStorage.setItem("columns", JSON.stringify(updatedColumns));
+  };
+
+  const handleDelete = () => {
+    dispatch(deleteColumn(column.id));
+    
+    // Update localStorage
+    const existingColumns = JSON.parse(localStorage.getItem("columns") || "[]");
+    const updatedColumns = existingColumns.filter((c: ColumnType) => c.id !== column.id);
+    localStorage.setItem("columns", JSON.stringify(updatedColumns));
   };
 
   return (
-    <Card className="w-80">
-      <CardHeader
-        className={`flex flex-row items-center space-x-2 rounded-t-lg px-4 py-2`}
-      >
+<Card className="w-80 shadow-lg border border-gray-100">
+      <CardHeader className={`flex flex-row items-center space-x-2 rounded-t-lg px-4 py-2`}>
         <div className="flex flex-1 items-center space-x-2">
-          <h3 className={`font-semibold ${column.color} px-1 rounded-sm text-sm`}>{column.title}</h3>
+          {isEditing ? (
+            <Input
+              value={editedTitle}
+              onChange={(e) => setEditedTitle(e.target.value)}
+              onBlur={handleSave}
+              onKeyPress={(e) => e.key === 'Enter' && handleSave()}
+              autoFocus
+            />
+          ) : (
+            <h3 className={`font-semibold ${column.color} px-1 rounded-sm text-sm`}>
+              {column.title}
+            </h3>
+          )}
           <span className="text-muted-foreground">{tasks.length}</span>
         </div>
         <DropdownMenu>
@@ -51,11 +85,16 @@ export function Column({ column, tasks, onAddTask, onTaskClick }: ColumnProps) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem>Delete</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleEdit}>Edit</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleDelete}>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <Plus size={16} onClick={handleAddColumn} className="cursor-pointer"/>
+        <Button
+          variant="link"
+          onClick={onAddTask}
+        >
+          <Plus size={16} />
+        </Button>
       </CardHeader>
       <CardContent ref={setNodeRef} className="p-4">
         {tasks.map((task) => (
@@ -71,7 +110,7 @@ export function Column({ column, tasks, onAddTask, onTaskClick }: ColumnProps) {
           onClick={onAddTask}
         >
           <Plus className="mr-2 h-4 w-4" />
-          New
+          New Task
         </Button>
       </CardContent>
     </Card>

@@ -26,6 +26,8 @@ const initialState: BoardState = {
   columns: defaultColumns,
   tasks: [],
   color: "",
+  selectedTask: null,
+  isDialogOpen: false,
 };
 
 export const boardReducer = (state = initialState, action: any) => {
@@ -64,6 +66,23 @@ export const boardReducer = (state = initialState, action: any) => {
       return {
         ...state,
         columns: [...state.columns, action.payload],
+      };
+    case ActionTypes.SET_SELECTED_TASK:
+      return {
+        ...state,
+        selectedTask: action.payload,
+      };
+
+    case ActionTypes.SET_DIALOG_OPEN:
+      return {
+        ...state,
+        isDialogOpen: action.payload,
+      };
+    case ActionTypes.DELETE_COLUMN:
+      return {
+        ...state,
+        columns: state.columns.filter((column) => column.id !== action.payload),
+        tasks: state.tasks.filter((task) => task.status !== action.payload),
       };
 
     default:

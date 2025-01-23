@@ -11,6 +11,8 @@ export interface BoardState {
   tasks: Task[];
   columns: Column[];
   color: string; 
+  selectedTask: Task | null
+  isDialogOpen: boolean
 }
 
 
@@ -19,5 +21,10 @@ export enum ActionTypes {
   UPDATE_TASK = 'UPDATE_TASK',
   DELETE_TASK = 'DELETE_TASK',
   MOVE_TASK = 'MOVE_TASK',
-  ADD_COLUMN = 'ADD_COLUMN'
+  ADD_COLUMN = 'ADD_COLUMN',
+  SET_SELECTED_TASK = 'SET_SELECTED_TASK',
+  SET_DIALOG_OPEN = 'SET_DIALOG_OPEN',
+  DELETE_COLUMN = 'DELETE_COLUMN',
+  UPDATE_COLUMN = 'UPDATE_COLUMN'
+
 }
