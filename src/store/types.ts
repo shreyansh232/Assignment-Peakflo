@@ -1,7 +1,6 @@
 import {Task} from '../types/board'
-import { Status } from '../types/board'
 export interface Column {
-  id: Status;
+  id: string;
   title: string;
   tasks: Task[];
   color: string; 

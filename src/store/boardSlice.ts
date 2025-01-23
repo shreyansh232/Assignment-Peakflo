@@ -5,19 +5,19 @@ export const defaultColumns: Column[] = [
   {
     id: "not-started" as Status,
     title: "Not started",
-    color: "bg-red-100",
+    color: "bg-red-200",
     tasks: [],
   },
   {
     id: "in-progress" as Status,
     title: "In progress",
-    color: "bg-yellow-100",
+    color: "bg-yellow-200",
     tasks: [],
   },
   {
     id: "completed" as Status,
     title: "Completed",
-    color: "bg-green-100",
+    color: "bg-green-200",
     tasks: [],
   },
 ];

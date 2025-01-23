@@ -6,19 +6,14 @@ import {
 } from "@dnd-kit/core";
 import { Column as ColumnComponent } from "./Column";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  addTask,
-  updateTask,
-  moveTask,
-  addColumn,
-  clearColumns
-} from "../store/actions";
-import type { Task, Status } from "../types/board";
+import { addTask, updateTask, moveTask, addColumn } from "../store/actions";
+import type { Task } from "../types/board";
 import type { BoardState, Column } from "../store/types";
 import { Button } from "./ui/button";
 import { Plus } from "lucide-react";
-import { useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 
 export default function Board() {
   const dispatch = useDispatch();
@@ -49,63 +44,74 @@ export default function Board() {
     localStorage.setItem("tasks", JSON.stringify(updatedTasks));
   };
   const handleAddColumn = () => {
-    setTimeout(() => {
-      const newColumn: Column = {
-        id: `column-${Date.now()}-${Math.random().toString(36).substr(2, 9)}` as Status,
-        title: "New Column",
-        color: "bg-blue-100",
-        tasks: [],
-      };
-      
-      dispatch(addColumn(newColumn));
-      const existingColumns = JSON.parse(localStorage.getItem("columns") || "[]");
-      localStorage.setItem(
-        "columns",
-        JSON.stringify([...existingColumns, newColumn])
-      );
-    }, 500); 
+    console.log("Adding a new column");
+    const newColumn: Column = {
+      id: uuidv4(),
+      title: "New Column",
+      color: "bg-blue-100",
+      tasks: [],
+    };
+
+    dispatch(addColumn(newColumn));
+    const existingColumns = JSON.parse(localStorage.getItem("columns") || "[]");
+    localStorage.setItem(
+      "columns",
+      JSON.stringify([...existingColumns, newColumn])
+    );
   };
-  
-  const handleAddTask = (columnId: Status) => {
-    const newTask = {
-      id: Date.now().toString(),
+
+  const handleAddTask = (columnId: string) => {
+    const newTask: Task = {
+      id: `task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       title: "New Task",
       description: "",
-      status: columnId
+      status: columnId,
     };
-    
-    dispatch(addTask(columnId, "New Task"));
+
+    dispatch(addTask(newTask));
     const currentTasks = tasks;
     localStorage.setItem("tasks", JSON.stringify([...currentTasks, newTask]));
   };
 
+  const hasLoaded = useRef(false);
+
   useEffect(() => {
+    if (hasLoaded.current) return;
+
     const existingColumns = JSON.parse(localStorage.getItem("columns") || "[]");
     const existingTasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-    
-    // Filter out columns that already exist in Redux store
+
     const uniqueColumns = existingColumns.filter(
-      (column: Column) => !columns.some(existingColumn => existingColumn.id === column.id)
+      (column: Column) =>
+        !columns.some((existingColumn) => existingColumn.id === column.id)
     );
-    
-    // Only add new unique columns
-    uniqueColumns.forEach((column: Column) => dispatch(addColumn(column)));
+
+    uniqueColumns.forEach((column: Column) => {
+      if (!columns.some((existingColumn) => existingColumn.id === column.id)) {
+        dispatch(addColumn(column));
+      }
+    });
+
     existingTasks.forEach((task: Task) => dispatch(updateTask(task)));
+
+    hasLoaded.current = true;
   }, [dispatch, columns]);
-  
 
-
-  
   return (
     <div className="flex min-h-screen flex-col p-8">
-      <div className="w-10 mb-2" onClick={handleAddColumn}>
-        <Button variant="default" className="bg-blue-700 hover:bg-blue-900">
+      <h1 className="text-4xl font-bold mb-5">Peakflo Board</h1>
+      <div className="w-10 mb-4">
+        <Button
+          variant="default"
+          className="bg-gray-800 hover:bg-gray-900"
+          onClick={handleAddColumn}
+        >
           <Plus size={16} />
-          Add New Status Board
+          New Status
         </Button>
       </div>
       <DndContext sensors={[sensors]} onDragEnd={handleDragEnd}>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {columns.map((column) => (
             <ColumnComponent
               key={column.id}

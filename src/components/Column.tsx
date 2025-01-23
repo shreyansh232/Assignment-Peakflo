@@ -77,7 +77,7 @@ export const Column = ({ column, tasks, onAddTask }: ColumnProps) => {
   // };
 
   return (
-    <Card className="w-80 shadow-lg border border-gray-100">
+    <Card className="w-80 shadow-lg border border-gray-300">
       <CardHeader
         className={`flex flex-row items-center space-x-2 rounded-t-lg px-4 py-2`}
       >
@@ -106,7 +106,7 @@ export const Column = ({ column, tasks, onAddTask }: ColumnProps) => {
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Button variant="ghost" size="icon" className="h-6 w-6">
               <MoreHorizontal className="h-4 w-4" />
               <span className="sr-only">Open menu</span>
             </Button>

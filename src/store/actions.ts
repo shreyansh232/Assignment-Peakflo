@@ -1,14 +1,9 @@
 import { ActionTypes } from "./types";
-import { Task, Status, Column } from "../types/board";
+import { Task, Column } from "../types/board";
 
-export const addTask = (status: Status, title: string) => ({
+export const addTask = (task: Task) => ({
   type: ActionTypes.ADD_TASK,
-  payload: {
-    id: Math.random().toString(36).substring(7),
-    title,
-    description: "",
-    status: status as Status,
-  },
+  payload: task,
 });
 
 export const updateTask = (task: Task) => ({
@@ -21,7 +16,7 @@ export const deleteTask = (taskId: string) => ({
   payload: taskId,
 });
 
-export const moveTask = (taskId: string, newStatus: Status) => ({
+export const moveTask = (taskId: string, newStatus: string) => ({
   type: ActionTypes.MOVE_TASK,
   payload: { taskId, newStatus },
 });
@@ -40,7 +35,7 @@ export const setDialogOpen = (isOpen: boolean) => ({
   payload: isOpen,
 });
 
-export const deleteColumn = (columnId: Status) => ({
+export const deleteColumn = (columnId: string) => ({
   type: ActionTypes.DELETE_COLUMN,
   payload: columnId,
 });

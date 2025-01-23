@@ -48,7 +48,7 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
       ref={setNodeRef}
       onClick={handleClick}
       style={style}
-      className="mb-2 cursor-grab active:cursor-grabbing"
+      className="mb-2 cursor-grab active:cursor-grabbing shadow-md"
       {...attributes}
       {...listeners}
     >
