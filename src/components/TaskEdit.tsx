@@ -18,8 +18,7 @@ export default function TaskEdit() {
 
   const handleSave = (updatedTask: Task) => {
     dispatch(updateTask(updatedTask));
-    
-    // Update localStorage
+  
     const existingTasks = JSON.parse(localStorage.getItem("tasks") || "[]");
     const updatedTasks = existingTasks.map((t: Task) =>
       t.id === updatedTask.id ? updatedTask : t
@@ -32,10 +31,14 @@ export default function TaskEdit() {
 
   const handleDelete = () => {
     if (taskId) {
-      dispatch(deleteTask(taskId));
-      navigate("/");
+        dispatch(deleteTask(taskId));
+        const existingTasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+        const updatedTasks = existingTasks.filter((task: Task) => task.id !== taskId);
+        localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+        navigate("/");
     }
-  };
+};
+
 
   return (
     <div className="flex justify-center items-center min-h-screen p-8">

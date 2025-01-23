@@ -1,30 +1,34 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
-import type { Task, BoardState, Column, Status } from "../types/board"
+import type { Task, BoardState, Column } from "../types/board"
+import { getTasksFromLocalStorage } from '../utils/localStorage';  
+
 
 export const defaultColumns: Column[] = [
-  {
-    id: "not-started" as Status,
-    title: "Not started",
-    color: "bg-red-200",
-    tasks: [],
-  },
-  {
-    id: "in-progress" as Status,
-    title: "In progress",
-    color: "bg-yellow-200",
-    tasks: [],
-  },
-  {
-    id: "completed" as Status,
-    title: "Completed",
-    color: "bg-green-200",
-    tasks: [],
-  },
-];
+    {
+      id: "not-started",
+      title: "Not started",
+      color: "bg-red-200",
+      tasks: [],
+    },
+    {
+      id: "in-progress",
+      title: "In progress",
+      color: "bg-yellow-200",
+      tasks: [],
+    },
+    {
+      id: "completed",
+      title: "Completed",
+      color: "bg-green-200",
+      tasks: [],
+    },
+  ];
+  
+  
 
 export const initialState: BoardState = {
   columns: defaultColumns,
-  tasks: [],
+  tasks: getTasksFromLocalStorage(),
   color: "",
   selectedTask: null,
   isDialogOpen: false,

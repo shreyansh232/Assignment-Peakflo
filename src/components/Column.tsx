@@ -40,15 +40,12 @@ export const Column = ({ column, tasks, onAddTask }: ColumnProps) => {
   const handleSave = () => {
     dispatch(updateColumnTitle(column.id, editedTitle));
     setIsEditing(false);
-    
-    // Update localStorage
     const existingColumns = JSON.parse(localStorage.getItem("columns") || "[]");
     const updatedColumns = existingColumns.map((c: ColumnType) =>
       c.id === column.id ? { ...c, title: editedTitle } : c
     );
     localStorage.setItem("columns", JSON.stringify(updatedColumns));
   };
-  
 
   const handleDelete = () => {
     dispatch(deleteColumn(column.id));
@@ -61,6 +58,7 @@ export const Column = ({ column, tasks, onAddTask }: ColumnProps) => {
 
   const handleUpdateTask = (updatedTask: Task) => {
     dispatch(updateTask(updatedTask));
+
     const existingTasks = JSON.parse(localStorage.getItem("tasks") || "[]");
     const updatedTasks = existingTasks.map((t: Task) =>
       t.id === updatedTask.id ? updatedTask : t
@@ -69,6 +67,7 @@ export const Column = ({ column, tasks, onAddTask }: ColumnProps) => {
   };
 
   const handleTaskClick = (taskId: string) => {
+    console.log(taskId);
     navigate(`/task/${taskId}`);
   };
 
