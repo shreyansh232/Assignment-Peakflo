@@ -1,5 +1,5 @@
 import { ActionTypes } from "./types";
-import { Task, Status } from "../types/board";
+import { Task, Status, Column } from "../types/board";
 
 export const addTask = (status: Status, title: string) => ({
   type: ActionTypes.ADD_TASK,
@@ -24,4 +24,9 @@ export const deleteTask = (taskId: string) => ({
 export const moveTask = (taskId: string, newStatus: Status) => ({
   type: ActionTypes.MOVE_TASK,
   payload: { taskId, newStatus },
+});
+
+export const addColumn = (column: Column) => ({
+  type: ActionTypes.ADD_COLUMN,
+  payload: column
 });

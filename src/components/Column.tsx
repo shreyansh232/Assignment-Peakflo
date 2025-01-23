@@ -8,8 +8,10 @@ import {
 } from "./ui/dropdown-menu";
 import { MoreHorizontal, Plus } from "lucide-react";
 import { useDroppable } from "@dnd-kit/core";
-import type { Column as ColumnType, Task } from "../types/board";
+import type { Column as ColumnType, Task, Status } from "../types/board";
 import { TaskCard } from "./task-card";
+import { addColumn } from "../store/actions";
+import { useDispatch } from "react-redux";
 
 interface ColumnProps {
   column: ColumnType;
@@ -19,9 +21,18 @@ interface ColumnProps {
 }
 
 export function Column({ column, tasks, onAddTask, onTaskClick }: ColumnProps) {
+  const dispatch = useDispatch();
   const { setNodeRef } = useDroppable({
     id: column.id,
   });
+  const handleAddColumn = () => {
+    dispatch(addColumn({
+      id: `column-${Date.now()}` as Status,
+      title: "New Column",
+      color: "bg-blue-100",
+      tasks: []
+    }));
+  };
 
   return (
     <Card className="w-80">
@@ -44,7 +55,7 @@ export function Column({ column, tasks, onAddTask, onTaskClick }: ColumnProps) {
             <DropdownMenuItem>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <Plus size={16}/>
+        <Plus size={16} onClick={handleAddColumn} className="cursor-pointer"/>
       </CardHeader>
       <CardContent ref={setNodeRef} className="p-4">
         {tasks.map((task) => (
